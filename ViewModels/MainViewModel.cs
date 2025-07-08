@@ -1,6 +1,9 @@
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using ImportadorModelo2.Models;
+using ImportadorModelo2.Core.Utils;
 
 namespace ImportadorModelo2.ViewModels
 {
@@ -13,10 +16,14 @@ namespace ImportadorModelo2.ViewModels
 
         public MainViewModel()
         {
-            // Valores padrão
             UsuarioNome = "Usuário";
             UsuarioEmail = "usuario@exemplo.com";
             MensagemBoasVindas = "Bem-vindo ao sistema!";
+
+            NovaImportacaoCommand = new RelayCommand(ExecuteNovaImportacao);
+            VisualizarLogsCommand = new RelayCommand(ExecuteVisualizarLogs);
+            NovoLayoutCommand = new RelayCommand(ExecuteNovoLayout);
+            LogoutCommand = new RelayCommand(ExecuteLogout);
         }
 
         public MainViewModel(Usuario usuario) : this()
@@ -54,6 +61,19 @@ namespace ImportadorModelo2.ViewModels
             }
         }
 
+        public ICommand NovaImportacaoCommand { get; }
+        public ICommand VisualizarLogsCommand { get; }
+        public ICommand NovoLayoutCommand { get; }
+        public ICommand LogoutCommand { get; }
+
+        public event Action? NovaImportacaoRequested;
+        public event Action? VisualizarLogsRequested;
+        public event Action? NovoLayoutRequested;
+        public event Action? LogoutRequested;
+
+        /// <summary>
+        /// Define dados do usuário logado
+        /// </summary>
         private void SetUsuario(Usuario usuario)
         {
             UsuarioNome = usuario.Nome ?? "Usuário";
@@ -70,9 +90,12 @@ namespace ImportadorModelo2.ViewModels
             }
         }
 
+        /// <summary>
+        /// Retorna saudação baseada no horário
+        /// </summary>
         private string GetSaudacao()
         {
-            var hora = System.DateTime.Now.Hour;
+            var hora = DateTime.Now.Hour;
             
             return hora switch
             {
@@ -82,7 +105,70 @@ namespace ImportadorModelo2.ViewModels
             };
         }
 
-        // INotifyPropertyChanged
+        /// <summary>
+        /// Executa comando de nova importação
+        /// </summary>
+        private void ExecuteNovaImportacao()
+        {
+            try
+            {
+                NovaImportacaoRequested?.Invoke();
+                System.Diagnostics.Debug.WriteLine("Comando Nova Importação executado");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao executar Nova Importação: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Executa comando de visualizar logs
+        /// </summary>
+        private void ExecuteVisualizarLogs()
+        {
+            try
+            {
+                VisualizarLogsRequested?.Invoke();
+                System.Diagnostics.Debug.WriteLine("Comando Visualizar Logs executado");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao executar Visualizar Logs: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Executa comando de novo layout
+        /// </summary>
+        private void ExecuteNovoLayout()
+        {
+            try
+            {
+                NovoLayoutRequested?.Invoke();
+                System.Diagnostics.Debug.WriteLine("Comando Novo Layout executado");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao executar Novo Layout: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Executa comando de logout
+        /// </summary>
+        private void ExecuteLogout()
+        {
+            try
+            {
+                LogoutRequested?.Invoke();
+                System.Diagnostics.Debug.WriteLine("Comando Logout executado");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Erro ao executar Logout: {ex.Message}");
+            }
+        }
+
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)

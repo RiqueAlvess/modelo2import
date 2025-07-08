@@ -10,7 +10,7 @@ namespace ImportadorModelo2.Views
         public LoginView()
         {
             InitializeComponent();
-            SetupDragAndClose();
+            SetupEvents();
         }
 
         private void InitializeComponent()
@@ -18,9 +18,20 @@ namespace ImportadorModelo2.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void SetupDragAndClose()
+        /// <summary>
+        /// Configura eventos da interface de login
+        /// </summary>
+        private void SetupEvents()
         {
-            // Área para arrastar a janela
+            SetupDragArea();
+            SetupCloseButton();
+        }
+
+        /// <summary>
+        /// Configura área para arrastar janela
+        /// </summary>
+        private void SetupDragArea()
+        {
             var dragArea = this.FindControl<Border>("DragArea");
             if (dragArea != null)
             {
@@ -33,8 +44,13 @@ namespace ImportadorModelo2.Views
                     }
                 };
             }
+        }
 
-            // Botão para fechar a janela
+        /// <summary>
+        /// Configura botão de fechar
+        /// </summary>
+        private void SetupCloseButton()
+        {
             var closeButton = this.FindControl<Button>("CloseButton");
             if (closeButton != null)
             {

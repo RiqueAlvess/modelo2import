@@ -1,0 +1,513 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ImportadorModelo2.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+             x:Class="ImportadorModelo2.Views.LayoutCreatorView"
+             x:DataType="vm:LayoutCreatorViewModel"
+             Background="White">
+
+  <UserControl.Styles>
+    <!-- Estilos para botões -->
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#3B82F6"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="16,8"/>
+      <Setter Property="FontWeight" Value="Medium"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="Button.primary:pointerover">
+      <Setter Property="Background" Value="#2563EB"/>
+    </Style>
+    
+    <Style Selector="Button.secondary">
+      <Setter Property="Background" Value="#F3F4F6"/>
+      <Setter Property="Foreground" Value="#374151"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="16,8"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="Button.secondary:pointerover">
+      <Setter Property="Background" Value="#E5E7EB"/>
+    </Style>
+
+    <!-- Estilo para área de upload -->
+    <Style Selector="Border.upload-area">
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="2"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Background" Value="#F9FAFB"/>
+    </Style>
+    
+    <Style Selector="Border.upload-area:pointerover">
+      <Setter Property="BorderBrush" Value="#3B82F6"/>
+      <Setter Property="Background" Value="#EBF4FF"/>
+    </Style>
+
+    <!-- Estilo para cards -->
+    <Style Selector="Border.card">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#E5E7EB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Padding" Value="20"/>
+    </Style>
+
+    <!-- Estilo para ComboBox -->
+    <Style Selector="ComboBox">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <!-- Estilo para TextBox -->
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#D1D5DB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <!-- Estilo para DataGrid -->
+    <Style Selector="DataGrid">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#E5E7EB"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+      <Setter Property="HeadersVisibility" Value="Column"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="60"/>  <!-- Header -->
+      <RowDefinition Height="*"/>   <!-- Content -->
+      <RowDefinition Height="80"/>  <!-- Footer -->
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <Border Grid.Row="0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+      <Grid Margin="24,0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="40"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Área para arrastar -->
+        <Border Grid.Column="0" Background="Transparent" Name="DragArea"/>
+
+        <!-- Título -->
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+          <TextBlock Text="Criar Novo Layout" 
+                     FontSize="20" 
+                     FontWeight="Bold" 
+                     Foreground="#1F2937"/>
+          <TextBlock Text="Configure o mapeamento entre planilha e API" 
+                     FontSize="14" 
+                     Foreground="#6B7280"/>
+        </StackPanel>
+
+        <!-- Botão Voltar -->
+        <Button Grid.Column="1" 
+                Classes="secondary" 
+                Margin="0,0,12,0"
+                Name="VoltarButton">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="←" FontSize="16"/>
+            <TextBlock Text="Voltar"/>
+          </StackPanel>
+        </Button>
+
+        <!-- Botão Fechar -->
+        <Button Grid.Column="2"
+                Background="Transparent"
+                BorderThickness="0"
+                Width="30" Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Name="CloseButton">
+          <TextBlock Text="✕" FontWeight="Bold" FontSize="14" Foreground="#6B7280"/>
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- Content -->
+    <ScrollViewer Grid.Row="1" Padding="24">
+      <StackPanel Spacing="24" MaxWidth="1200">
+
+        <!-- Etapa 1: Upload da Planilha -->
+        <Border Classes="card">
+          <StackPanel Spacing="16">
+            <StackPanel Spacing="4">
+              <TextBlock Text="📄 Etapa 1: Selecionar Planilha" 
+                         FontSize="18" 
+                         FontWeight="Bold" 
+                         Foreground="#1F2937"/>
+              <TextBlock Text="Faça upload de um arquivo CSV ou XLSX para criar o layout" 
+                         FontSize="14" 
+                         Foreground="#6B7280"/>
+            </StackPanel>
+
+            <Border Classes="upload-area" MinHeight="120" Name="UploadArea">
+              <StackPanel HorizontalAlignment="Center" 
+                         VerticalAlignment="Center" 
+                         Spacing="12">
+                <Border Background="#3B82F6" 
+                        CornerRadius="20" 
+                        Width="40" 
+                        Height="40">
+                  <TextBlock Text="📁" 
+                             FontSize="20" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="Clique para selecionar ou arraste o arquivo aqui" 
+                           FontSize="16" 
+                           FontWeight="Medium" 
+                           Foreground="#374151"/>
+                <TextBlock Text="Formatos suportados: .csv, .xlsx" 
+                           FontSize="12" 
+                           Foreground="#6B7280"/>
+              </StackPanel>
+            </Border>
+
+            <!-- Info do arquivo selecionado -->
+            <StackPanel Spacing="8" IsVisible="{Binding ArquivoSelecionado}">
+              <StackPanel Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="📄" FontSize="16"/>
+                <TextBlock Text="{Binding NomeArquivo}" 
+                           FontWeight="Medium" 
+                           Foreground="#1F2937"/>
+                <TextBlock Text="{Binding TamanhoArquivo}" 
+                           FontSize="12" 
+                           Foreground="#6B7280"/>
+              </StackPanel>
+              
+              <!-- Configuração da linha do cabeçalho -->
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="100"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBlock Grid.Column="0" 
+                           Text="Linha do cabeçalho:" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,12,0"/>
+                
+                <NumericUpDown Grid.Column="1" 
+                               Value="{Binding LinhaHeader}" 
+                               Minimum="1" 
+                               Maximum="20"/>
+                
+                <Button Grid.Column="2" 
+                        Classes="primary" 
+                        Margin="12,0,0,0"
+                        Command="{Binding ProcessarArquivoCommand}">
+                  <TextBlock Text="Processar"/>
+                </Button>
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+        </Border>
+
+        <!-- Etapa 2: Colunas Identificadas -->
+        <Border Classes="card" IsVisible="{Binding ColunasIdentificadas}">
+          <StackPanel Spacing="16">
+            <StackPanel Spacing="4">
+              <TextBlock Text="📋 Etapa 2: Colunas Identificadas" 
+                         FontSize="18" 
+                         FontWeight="Bold" 
+                         Foreground="#1F2937"/>
+              <TextBlock Text="{Binding DescricaoColunas}" 
+                         FontSize="14" 
+                         Foreground="#6B7280"/>
+            </StackPanel>
+
+            <!-- Lista de colunas em cards -->
+            <ScrollViewer MaxHeight="200">
+              <ItemsControl ItemsSource="{Binding Colunas}">
+                <ItemsControl.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                  </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Border Background="#F3F4F6" 
+                            BorderBrush="#D1D5DB" 
+                            BorderThickness="1" 
+                            CornerRadius="6" 
+                            Padding="12,8" 
+                            Margin="4">
+                      <StackPanel Spacing="4">
+                        <TextBlock Text="{Binding Nome}" 
+                                   FontWeight="Medium" 
+                                   FontSize="12"/>
+                        <TextBlock Text="{Binding Indice, StringFormat='Col {0}'}" 
+                                   FontSize="10" 
+                                   Foreground="#6B7280"/>
+                      </StackPanel>
+                    </Border>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </ScrollViewer>
+          </StackPanel>
+        </Border>
+
+        <!-- Etapa 3: Configurações de Negócio -->
+        <Border Classes="card" IsVisible="{Binding ColunasIdentificadas}">
+          <StackPanel Spacing="16">
+            <StackPanel Spacing="4">
+              <TextBlock Text="⚙️ Etapa 3: Regras de Negócio" 
+                         FontSize="18" 
+                         FontWeight="Bold" 
+                         Foreground="#1F2937"/>
+              <TextBlock Text="Configure as regras que serão aplicadas durante a importação" 
+                         FontSize="14" 
+                         Foreground="#6B7280"/>
+            </StackPanel>
+
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+
+              <!-- Coluna 1: Criar -->
+              <StackPanel Grid.Column="0" Spacing="8" Margin="0,0,12,0">
+                <TextBlock Text="Criação Automática" 
+                           FontWeight="Bold" 
+                           Foreground="#374151"/>
+                <CheckBox Content="Criar Funcionário" IsChecked="{Binding CriarFuncionario}"/>
+                <CheckBox Content="Criar Cargo" IsChecked="{Binding CriarCargo}"/>
+                <CheckBox Content="Criar Setor" IsChecked="{Binding CriarSetor}"/>
+                <CheckBox Content="Criar Centro de Custo" IsChecked="{Binding CriarCentroCusto}"/>
+                <CheckBox Content="Criar Unidade" IsChecked="{Binding CriarUnidade}"/>
+                <CheckBox Content="Criar Turno" IsChecked="{Binding CriarTurno}"/>
+              </StackPanel>
+
+              <!-- Coluna 2: Atualizar -->
+              <StackPanel Grid.Column="1" Spacing="8" Margin="6,0">
+                <TextBlock Text="Atualização Automática" 
+                           FontWeight="Bold" 
+                           Foreground="#374151"/>
+                <CheckBox Content="Atualizar Funcionário" IsChecked="{Binding AtualizarFuncionario}"/>
+                <CheckBox Content="Atualizar Cargo" IsChecked="{Binding AtualizarCargo}"/>
+                <CheckBox Content="Atualizar Setor" IsChecked="{Binding AtualizarSetor}"/>
+                <CheckBox Content="Atualizar Centro de Custo" IsChecked="{Binding AtualizarCentroCusto}"/>
+                <CheckBox Content="Atualizar Unidade" IsChecked="{Binding AtualizarUnidade}"/>
+                <CheckBox Content="Atualizar Turno" IsChecked="{Binding AtualizarTurno}"/>
+              </StackPanel>
+
+              <!-- Coluna 3: Outras -->
+              <StackPanel Grid.Column="2" Spacing="8" Margin="12,0,0,0">
+                <TextBlock Text="Outras Configurações" 
+                           FontWeight="Bold" 
+                           Foreground="#374151"/>
+                <CheckBox Content="Criar Histórico" IsChecked="{Binding CriarHistorico}"/>
+                <CheckBox Content="Destravar se Bloqueado" IsChecked="{Binding DestravarBloqueado}"/>
+                <CheckBox Content="Não Importar sem Hierarquia" IsChecked="{Binding NaoImportarSemHierarquia}"/>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+        <!-- Etapa 4: Mapeamento de Campos -->
+        <Border Classes="card" IsVisible="{Binding ColunasIdentificadas}">
+          <StackPanel Spacing="16">
+            <StackPanel Spacing="4">
+              <TextBlock Text="🔗 Etapa 4: Mapeamento de Campos" 
+                         FontSize="18" 
+                         FontWeight="Bold" 
+                         Foreground="#1F2937"/>
+              <TextBlock Text="Relacione os campos da API com as colunas da sua planilha" 
+                         FontSize="14" 
+                         Foreground="#6B7280"/>
+            </StackPanel>
+
+            <!-- Filtro de campos -->
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+              
+              <TextBlock Grid.Column="0" 
+                         Text="Filtrar por categoria:" 
+                         VerticalAlignment="Center"/>
+              
+              <ComboBox Grid.Column="1" 
+                        SelectedItem="{Binding CategoriaFiltro}"
+                        Margin="12,0,0,0">
+                <ComboBoxItem Content="Todos os campos"/>
+                <ComboBoxItem Content="Funcionário"/>
+                <ComboBoxItem Content="Cargo"/>
+                <ComboBoxItem Content="Setor"/>
+                <ComboBoxItem Content="Centro de Custo"/>
+                <ComboBoxItem Content="Unidade"/>
+                <ComboBoxItem Content="Identificação"/>
+              </ComboBox>
+            </Grid>
+
+            <!-- Tabela de mapeamento -->
+            <DataGrid ItemsSource="{Binding CamposMapeamento}" 
+                      AutoGenerateColumns="False"
+                      CanUserResizeColumns="True"
+                      MinHeight="300"
+                      MaxHeight="400">
+              <DataGrid.Columns>
+                <DataGridTextColumn Header="Campo da API" 
+                                    Binding="{Binding NomeCampo}" 
+                                    Width="200" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridTextColumn Header="Categoria" 
+                                    Binding="{Binding Categoria}" 
+                                    Width="120" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridTextColumn Header="Tipo" 
+                                    Binding="{Binding Tipo}" 
+                                    Width="100" 
+                                    IsReadOnly="True"/>
+                
+                <DataGridCheckBoxColumn Header="Obrigatório" 
+                                        Binding="{Binding Obrigatorio}" 
+                                        Width="100" 
+                                        IsReadOnly="True"/>
+                
+                <DataGridTemplateColumn Header="Coluna da Planilha" Width="200">
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <ComboBox ItemsSource="{Binding $parent[UserControl].DataContext.ColunasDisponiveis}"
+                                SelectedItem="{Binding ColunaSelecionada}"
+                                DisplayMemberBinding="{Binding Nome}"
+                                Margin="4"/>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTextColumn Header="Valor Padrão" 
+                                    Binding="{Binding ValorPadrao}" 
+                                    Width="150"/>
+              </DataGrid.Columns>
+            </DataGrid>
+          </StackPanel>
+        </Border>
+
+        <!-- Etapa 5: Nome e Descrição do Layout -->
+        <Border Classes="card" IsVisible="{Binding ColunasIdentificadas}">
+          <StackPanel Spacing="16">
+            <StackPanel Spacing="4">
+              <TextBlock Text="💾 Etapa 5: Informações do Layout" 
+                         FontSize="18" 
+                         FontWeight="Bold" 
+                         Foreground="#1F2937"/>
+              <TextBlock Text="Defina um nome e descrição para identificar este layout" 
+                         FontSize="14" 
+                         Foreground="#6B7280"/>
+            </StackPanel>
+
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="20"/>
+                <ColumnDefinition Width="*"/>
+              </Grid.ColumnDefinitions>
+
+              <StackPanel Grid.Column="0" Spacing="8">
+                <TextBlock Text="Nome do Layout *" 
+                           FontWeight="Medium" 
+                           Foreground="#374151"/>
+                <TextBox Text="{Binding NomeLayout}" 
+                         Watermark="Ex: Importação RH Janeiro 2025"/>
+              </StackPanel>
+
+              <StackPanel Grid.Column="2" Spacing="8">
+                <TextBlock Text="Descrição" 
+                           FontWeight="Medium" 
+                           Foreground="#374151"/>
+                <TextBox Text="{Binding DescricaoLayout}" 
+                         Watermark="Descreva brevemente este layout..."
+                         AcceptsReturn="True"
+                         Height="80"/>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Footer -->
+    <Border Grid.Row="2" 
+            Background="#F8FAFC" 
+            BorderBrush="#E2E8F0" 
+            BorderThickness="0,1,0,0" 
+            Padding="24">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Status/Info -->
+        <StackPanel Grid.Column="0" 
+                    Orientation="Horizontal" 
+                    Spacing="12" 
+                    VerticalAlignment="Center">
+          <Border Background="#10B981" 
+                  CornerRadius="10" 
+                  Width="20" 
+                  Height="20"
+                  IsVisible="{Binding ProntoParaSalvar}">
+            <TextBlock Text="✓" 
+                       FontSize="12" 
+                       Foreground="White" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center"/>
+          </Border>
+          <TextBlock Text="{Binding StatusMensagem}" 
+                     Foreground="#374151" 
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Botões de ação -->
+        <StackPanel Grid.Column="1" 
+                    Orientation="Horizontal" 
+                    Spacing="12">
+          <Button Classes="secondary" 
+                  Command="{Binding LimparCommand}">
+            <TextBlock Text="Limpar"/>
+          </Button>
+          
+          <Button Classes="primary" 
+                  Command="{Binding SalvarLayoutCommand}"
+                  IsEnabled="{Binding ProntoParaSalvar}">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <TextBlock Text="💾"/>
+              <TextBlock Text="Salvar Layout"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+  </Grid>
+</UserControl>

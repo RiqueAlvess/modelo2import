@@ -3,37 +3,72 @@
              xmlns:vm="using:ImportadorModelo2.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             mc:Ignorable="d" d:DesignWidth="1024" d:DesignHeight="768"
              x:Class="ImportadorModelo2.Views.MainView"
              x:DataType="vm:MainViewModel"
              Background="White">
 
   <UserControl.Styles>
+    <!-- Estilo para botões principais -->
+    <Style Selector="Button.main-action">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="BorderBrush" Value="#E2E8F0"/>
+      <Setter Property="BorderThickness" Value="1"/>
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="Padding" Value="24"/>
+      <Setter Property="Cursor" Value="Hand"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="VerticalAlignment" Value="Stretch"/>
+    </Style>
+    
+    <Style Selector="Button.main-action:pointerover">
+      <Setter Property="Background" Value="#F8F9FA"/>
+      <Setter Property="BorderBrush" Value="#CBD5E0"/>
+      <Setter Property="Opacity" Value="1"/>
+    </Style>
+    
+    <Style Selector="Button.main-action:pressed">
+      <Setter Property="Background" Value="#E2E8F0"/>
+      <Setter Property="BorderBrush" Value="#A0AEC0"/>
+    </Style>
+
     <!-- Estilo para botão de logout -->
     <Style Selector="Button.logout">
       <Setter Property="Background" Value="#DC2626"/>
       <Setter Property="Foreground" Value="White"/>
       <Setter Property="BorderThickness" Value="0"/>
       <Setter Property="CornerRadius" Value="6"/>
-      <Setter Property="Padding" Value="12,8"/>
+      <Setter Property="Padding" Value="8,6"/>
       <Setter Property="Cursor" Value="Hand"/>
     </Style>
     
     <Style Selector="Button.logout:pointerover">
       <Setter Property="Background" Value="#B91C1C"/>
     </Style>
+
+    <!-- Estilo para botão de fechar -->
+    <Style Selector="Button.close">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#666666"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <Style Selector="Button.close:pointerover">
+      <Setter Property="Background" Value="#FF0000"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
   </UserControl.Styles>
 
-  <!-- Grid principal com área de arrastar e botão fechar -->
+  <!-- Grid principal -->
   <Grid Background="White">
     <Grid.RowDefinitions>
       <RowDefinition Height="50"/> <!-- Header -->
       <RowDefinition Height="*"/>  <!-- Conteúdo -->
     </Grid.RowDefinitions>
 
-    <!-- Header com botão fechar e info do usuário -->
-    <Border Grid.Row="0" Background="#F8F9FA" Padding="20,10">
-      <Grid>
+    <!-- Header com área de arrastar e controles -->
+    <Border Grid.Row="0" Background="#F8F9FA" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+      <Grid Margin="20,0">
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*"/>
           <ColumnDefinition Width="Auto"/>
@@ -45,144 +80,219 @@
         <Border Grid.Column="0" Background="Transparent" Name="DragArea"/>
         
         <!-- Info do usuário -->
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-          <TextBlock Text="👤" FontSize="16"/>
-          <TextBlock Text="{Binding UsuarioNome}" 
-                     FontWeight="Medium" 
-                     Foreground="#2D3748"
-                     VerticalAlignment="Center"/>
-          <TextBlock Text="|" Foreground="#CBD5E0" VerticalAlignment="Center"/>
-          <TextBlock Text="{Binding UsuarioEmail}" 
-                     FontSize="12" 
-                     Foreground="#718096"
-                     VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" 
+                    Orientation="Horizontal" 
+                    Spacing="12" 
+                    VerticalAlignment="Center">
+          <Border Background="#4A5568" 
+                  Width="32" Height="32" 
+                  CornerRadius="16">
+            <TextBlock Text="👤" 
+                       FontSize="14"
+                       Foreground="White"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+          </Border>
+          <StackPanel Spacing="2">
+            <TextBlock Text="{Binding UsuarioNome}" 
+                       FontWeight="Medium" 
+                       FontSize="14"
+                       Foreground="#2D3748"/>
+            <TextBlock Text="{Binding UsuarioEmail}" 
+                       FontSize="12" 
+                       Foreground="#718096"/>
+          </StackPanel>
         </StackPanel>
         
         <!-- Botão Logout -->
         <Button Grid.Column="2"
                 Classes="logout"
-                Margin="10,0"
+                Margin="15,0,10,0"
                 Name="LogoutButton">
-          <StackPanel Orientation="Horizontal" Spacing="5">
-            <TextBlock Text="↩" FontSize="14"/>
-            <TextBlock Text="Sair"/>
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <TextBlock Text="⬅" FontSize="12"/>
+            <TextBlock Text="Sair" FontSize="12"/>
           </StackPanel>
         </Button>
         
         <!-- Botão X para fechar -->
         <Button Grid.Column="3"
-                Background="Transparent"
-                BorderThickness="0"
+                Classes="close"
                 Width="30" Height="30"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Name="CloseButton">
-          <TextBlock Text="✕" FontWeight="Bold" FontSize="14" Foreground="#666"/>
+          <TextBlock Text="✕" FontWeight="Bold" FontSize="14"/>
         </Button>
       </Grid>
     </Border>
 
     <!-- Conteúdo principal -->
-    <Border Grid.Row="1" Background="White" Padding="20">
-      <StackPanel Spacing="30" HorizontalAlignment="Center" VerticalAlignment="Center">
-        
-        <!-- Ícone de sucesso -->
-        <Border Background="#10B981" 
-                Width="80" Height="80" 
-                CornerRadius="40"
-                HorizontalAlignment="Center">
-          <TextBlock Text="✓" 
-                     FontSize="40"
-                     Foreground="White"
-                     FontWeight="Bold"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Center"/>
-        </Border>
+    <Grid Grid.Row="1" Margin="40">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="40"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
 
-        <!-- Mensagem de boas-vindas -->
-        <StackPanel Spacing="15">
-          <TextBlock Text="🎉 Login realizado com sucesso!"
-                     FontSize="28"
-                     FontWeight="Bold"
-                     Foreground="#1A202C"
-                     HorizontalAlignment="Center"/>
-          
-          <TextBlock Text="{Binding MensagemBoasVindas}"
-                     FontSize="16"
-                     Foreground="#4A5568"
-                     HorizontalAlignment="Center"
-                     TextWrapping="Wrap"/>
-          
-          <TextBlock Text="Sistema carregado e pronto para uso."
-                     FontSize="14"
-                     Foreground="#718096"
-                     HorizontalAlignment="Center"/>
-        </StackPanel>
-
-        <!-- Cards de funcionalidades futuras -->
-        <StackPanel Spacing="15" MaxWidth="400">
-          
-          <Border Background="#F7FAFC" 
-                  BorderBrush="#E2E8F0" 
-                  BorderThickness="1" 
-                  CornerRadius="8" 
-                  Padding="20">
-            <StackPanel Spacing="10">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="📊" FontSize="20"/>
-                <TextBlock Text="Importação de Dados" 
-                           FontWeight="Medium" 
-                           Foreground="#2D3748"/>
-              </StackPanel>
-              <TextBlock Text="Funcionalidade de importação será implementada aqui." 
-                         FontSize="12" 
-                         Foreground="#718096"
-                         TextWrapping="Wrap"/>
-            </StackPanel>
-          </Border>
-
-          <Border Background="#F7FAFC" 
-                  BorderBrush="#E2E8F0" 
-                  BorderThickness="1" 
-                  CornerRadius="8" 
-                  Padding="20">
-            <StackPanel Spacing="10">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="📋" FontSize="20"/>
-                <TextBlock Text="Relatórios" 
-                           FontWeight="Medium" 
-                           Foreground="#2D3748"/>
-              </StackPanel>
-              <TextBlock Text="Geração de relatórios personalizados." 
-                         FontSize="12" 
-                         Foreground="#718096"
-                         TextWrapping="Wrap"/>
-            </StackPanel>
-          </Border>
-
-          <Border Background="#F7FAFC" 
-                  BorderBrush="#E2E8F0" 
-                  BorderThickness="1" 
-                  CornerRadius="8" 
-                  Padding="20">
-            <StackPanel Spacing="10">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="⚙️" FontSize="20"/>
-                <TextBlock Text="Configurações" 
-                           FontWeight="Medium" 
-                           Foreground="#2D3748"/>
-              </StackPanel>
-              <TextBlock Text="Personalizar configurações do sistema." 
-                         FontSize="12" 
-                         Foreground="#718096"
-                         TextWrapping="Wrap"/>
-            </StackPanel>
-          </Border>
-
-        </StackPanel>
-
+      <!-- Título e descrição -->
+      <StackPanel Grid.Row="0" Spacing="8">
+        <TextBlock Text="Importador Modelo 2"
+                   FontSize="32"
+                   FontWeight="Bold"
+                   Foreground="#1A202C"/>
+        <TextBlock Text="Selecione uma das opções abaixo para começar"
+                   FontSize="16"
+                   Foreground="#718096"/>
       </StackPanel>
-    </Border>
+
+      <!-- Spacer -->
+      <Border Grid.Row="1"/>
+
+      <!-- Cards das funcionalidades -->
+      <Grid Grid.Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="20"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="20"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Card 1: Nova Importação -->
+        <Button Grid.Column="0" 
+                Classes="main-action"
+                Name="NovaImportacaoButton">
+          <StackPanel Spacing="20" HorizontalAlignment="Center">
+            <!-- Ícone -->
+            <Border Background="#3182CE" 
+                    Width="80" Height="80" 
+                    CornerRadius="40">
+              <TextBlock Text="📊" 
+                         FontSize="36"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"/>
+            </Border>
+            
+            <!-- Título -->
+            <TextBlock Text="Nova Importação"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#1A202C"
+                       HorizontalAlignment="Center"/>
+            
+            <!-- Descrição -->
+            <TextBlock Text="Inicie uma nova importação de dados com base em um layout selecionado"
+                       FontSize="14"
+                       Foreground="#4A5568"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxWidth="200"/>
+            
+            <!-- Status/Info adicional -->
+            <Border Background="#EBF8FF" 
+                    BorderBrush="#3182CE" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="8,4">
+              <TextBlock Text="Pronto para usar"
+                         FontSize="12"
+                         Foreground="#2B6CB0"
+                         HorizontalAlignment="Center"/>
+            </Border>
+          </StackPanel>
+        </Button>
+
+        <!-- Card 2: Visualizar Logs -->
+        <Button Grid.Column="2" 
+                Classes="main-action"
+                Name="VisualizarLogsButton">
+          <StackPanel Spacing="20" HorizontalAlignment="Center">
+            <!-- Ícone -->
+            <Border Background="#10B981" 
+                    Width="80" Height="80" 
+                    CornerRadius="40">
+              <TextBlock Text="📋" 
+                         FontSize="36"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"/>
+            </Border>
+            
+            <!-- Título -->
+            <TextBlock Text="Visualizar Logs"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#1A202C"
+                       HorizontalAlignment="Center"/>
+            
+            <!-- Descrição -->
+            <TextBlock Text="Consulte o histórico de importações e visualize relatórios detalhados"
+                       FontSize="14"
+                       Foreground="#4A5568"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxWidth="200"/>
+            
+            <!-- Status/Info adicional -->
+            <Border Background="#F0FDF4" 
+                    BorderBrush="#10B981" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="8,4">
+              <TextBlock Text="Histórico disponível"
+                         FontSize="12"
+                         Foreground="#047857"
+                         HorizontalAlignment="Center"/>
+            </Border>
+          </StackPanel>
+        </Button>
+
+        <!-- Card 3: Novo Layout -->
+        <Button Grid.Column="4" 
+                Classes="main-action"
+                Name="NovoLayoutButton">
+          <StackPanel Spacing="20" HorizontalAlignment="Center">
+            <!-- Ícone -->
+            <Border Background="#7C3AED" 
+                    Width="80" Height="80" 
+                    CornerRadius="40">
+              <TextBlock Text="⚙️" 
+                         FontSize="36"
+                         HorizontalAlignment="Center"
+                         VerticalAlignment="Center"/>
+            </Border>
+            
+            <!-- Título -->
+            <TextBlock Text="Novo Layout"
+                       FontSize="20"
+                       FontWeight="Bold"
+                       Foreground="#1A202C"
+                       HorizontalAlignment="Center"/>
+            
+            <!-- Descrição -->
+            <TextBlock Text="Crie ou edite layouts de importação para diferentes tipos de arquivos"
+                       FontSize="14"
+                       Foreground="#4A5568"
+                       TextWrapping="Wrap"
+                       TextAlignment="Center"
+                       MaxWidth="200"/>
+            
+            <!-- Status/Info adicional -->
+            <Border Background="#FAF5FF" 
+                    BorderBrush="#7C3AED" 
+                    BorderThickness="1" 
+                    CornerRadius="4" 
+                    Padding="8,4">
+              <TextBlock Text="Personalizar"
+                         FontSize="12"
+                         Foreground="#6D28D9"
+                         HorizontalAlignment="Center"/>
+            </Border>
+          </StackPanel>
+        </Button>
+
+      </Grid>
+    </Grid>
   </Grid>
 
 </UserControl>

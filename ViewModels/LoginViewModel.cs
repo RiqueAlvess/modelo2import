@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using ImportadorModelo2.Services;
 using ImportadorModelo2.Models;
+using ImportadorModelo2.Core.Utils;
 
 namespace ImportadorModelo2.ViewModels
 {
@@ -22,7 +23,6 @@ namespace ImportadorModelo2.ViewModels
         {
             _autenticacaoService = autenticacaoService;
             
-            // Inicializar comandos
             LoginCommand = new AsyncRelayCommand(ExecuteLoginAsync, CanExecuteLogin);
             TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
             ForgotPasswordCommand = new RelayCommand(ExecuteForgotPassword);
@@ -30,11 +30,9 @@ namespace ImportadorModelo2.ViewModels
             MicrosoftLoginCommand = new RelayCommand(ExecuteMicrosoftLogin);
             SignUpCommand = new RelayCommand(ExecuteSignUp);
 
-            // Carregar credenciais salvas
             Task.Run(async () => await CarregarCredenciaisSalvasAsync());
         }
 
-        // Propriedades
         public string Email
         {
             get => _email;
@@ -91,7 +89,6 @@ namespace ImportadorModelo2.ViewModels
             private set => SetProperty(ref _errorMessage, value);
         }
 
-        // Comandos
         public ICommand LoginCommand { get; }
         public ICommand TogglePasswordVisibilityCommand { get; }
         public ICommand ForgotPasswordCommand { get; }
@@ -99,11 +96,12 @@ namespace ImportadorModelo2.ViewModels
         public ICommand MicrosoftLoginCommand { get; }
         public ICommand SignUpCommand { get; }
 
-        // Eventos
         public event Action<Usuario>? LoginSucceeded;
         public event Action<string>? NavigationRequested;
 
-        // Métodos dos comandos
+        /// <summary>
+        /// Executa o processo de login
+        /// </summary>
         private async Task ExecuteLoginAsync()
         {
             try
@@ -118,7 +116,6 @@ namespace ImportadorModelo2.ViewModels
                 {
                     if (RememberMe)
                     {
-                        // Salvar credenciais localmente se necessário
                         await _autenticacaoService.SalvarCredenciaisAsync(Email, RememberMe);
                     }
 
@@ -132,7 +129,6 @@ namespace ImportadorModelo2.ViewModels
             catch (Exception ex)
             {
                 ErrorMessage = "Erro de conexão. Tente novamente.";
-                // Log do erro
                 System.Diagnostics.Debug.WriteLine($"Erro no login: {ex.Message}");
             }
             finally
@@ -141,6 +137,9 @@ namespace ImportadorModelo2.ViewModels
             }
         }
 
+        /// <summary>
+        /// Verifica se o login pode ser executado
+        /// </summary>
         private bool CanExecuteLogin()
         {
             return !IsLoading && 
@@ -148,38 +147,57 @@ namespace ImportadorModelo2.ViewModels
                    !string.IsNullOrWhiteSpace(Password);
         }
 
+        /// <summary>
+        /// Alterna visibilidade da senha
+        /// </summary>
         private void TogglePasswordVisibility()
         {
             ShowPassword = !ShowPassword;
         }
 
+        /// <summary>
+        /// Navega para recuperação de senha
+        /// </summary>
         private void ExecuteForgotPassword()
         {
             NavigationRequested?.Invoke("ForgotPassword");
         }
 
+        /// <summary>
+        /// Inicia login com Google
+        /// </summary>
         private void ExecuteGoogleLogin()
         {
-            // TODO: Implementar login com Google
             NavigationRequested?.Invoke("GoogleLogin");
         }
 
+        /// <summary>
+        /// Inicia login com Microsoft
+        /// </summary>
         private void ExecuteMicrosoftLogin()
         {
-            // TODO: Implementar login com Microsoft
             NavigationRequested?.Invoke("MicrosoftLogin");
         }
 
+        /// <summary>
+        /// Navega para cadastro
+        /// </summary>
         private void ExecuteSignUp()
         {
             NavigationRequested?.Invoke("SignUp");
         }
 
+        /// <summary>
+        /// Limpa mensagem de erro
+        /// </summary>
         private void ClearError()
         {
             ErrorMessage = null;
         }
 
+        /// <summary>
+        /// Carrega credenciais salvas localmente
+        /// </summary>
         private async Task CarregarCredenciaisSalvasAsync()
         {
             try
@@ -197,7 +215,6 @@ namespace ImportadorModelo2.ViewModels
             }
         }
 
-        // INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -212,62 +229,5 @@ namespace ImportadorModelo2.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-    }
-
-    // Helper classes para comandos
-    public class RelayCommand : ICommand
-    {
-        private readonly Action _execute;
-        private readonly Func<bool>? _canExecute;
-
-        public RelayCommand(Action execute, Func<bool>? canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
-
-        public void Execute(object? parameter) => _execute();
-
-        public void NotifyCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    public class AsyncRelayCommand : ICommand
-    {
-        private readonly Func<Task> _execute;
-        private readonly Func<bool>? _canExecute;
-        private bool _isExecuting;
-
-        public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
-        {
-            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = canExecute;
-        }
-
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter) => !_isExecuting && (_canExecute?.Invoke() ?? true);
-
-        public async void Execute(object? parameter)
-        {
-            if (!CanExecute(parameter)) return;
-
-            try
-            {
-                _isExecuting = true;
-                NotifyCanExecuteChanged();
-                await _execute();
-            }
-            finally
-            {
-                _isExecuting = false;
-                NotifyCanExecuteChanged();
-            }
-        }
-
-        public void NotifyCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

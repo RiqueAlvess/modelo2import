@@ -9,11 +9,14 @@ namespace ImportadorModelo2.Views
     public partial class MainView : UserControl
     {
         public event Action? LogoutRequested;
+        public event Action? NovaImportacaoRequested;
+        public event Action? VisualizarLogsRequested;
+        public event Action? NovoLayoutRequested;
 
         public MainView()
         {
             InitializeComponent();
-            SetupDragAndClose();
+            SetupEvents();
         }
 
         private void InitializeComponent()
@@ -21,9 +24,22 @@ namespace ImportadorModelo2.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void SetupDragAndClose()
+        /// <summary>
+        /// Configura eventos da interface
+        /// </summary>
+        private void SetupEvents()
         {
-            // Área para arrastar a janela
+            SetupDragArea();
+            SetupCloseButton();
+            SetupLogoutButton();
+            SetupActionButtons();
+        }
+
+        /// <summary>
+        /// Configura área para arrastar janela
+        /// </summary>
+        private void SetupDragArea()
+        {
             var dragArea = this.FindControl<Border>("DragArea");
             if (dragArea != null)
             {
@@ -36,8 +52,13 @@ namespace ImportadorModelo2.Views
                     }
                 };
             }
+        }
 
-            // Botão para fechar a janela
+        /// <summary>
+        /// Configura botão de fechar
+        /// </summary>
+        private void SetupCloseButton()
+        {
             var closeButton = this.FindControl<Button>("CloseButton");
             if (closeButton != null)
             {
@@ -47,14 +68,52 @@ namespace ImportadorModelo2.Views
                     window?.Close();
                 };
             }
+        }
 
-            // Botão de logout
+        /// <summary>
+        /// Configura botão de logout
+        /// </summary>
+        private void SetupLogoutButton()
+        {
             var logoutButton = this.FindControl<Button>("LogoutButton");
             if (logoutButton != null)
             {
                 logoutButton.Click += (sender, e) =>
                 {
                     LogoutRequested?.Invoke();
+                };
+            }
+        }
+
+        /// <summary>
+        /// Configura botões de ação principais
+        /// </summary>
+        private void SetupActionButtons()
+        {
+            var novaImportacaoButton = this.FindControl<Button>("NovaImportacaoButton");
+            if (novaImportacaoButton != null)
+            {
+                novaImportacaoButton.Click += (sender, e) =>
+                {
+                    NovaImportacaoRequested?.Invoke();
+                };
+            }
+
+            var visualizarLogsButton = this.FindControl<Button>("VisualizarLogsButton");
+            if (visualizarLogsButton != null)
+            {
+                visualizarLogsButton.Click += (sender, e) =>
+                {
+                    VisualizarLogsRequested?.Invoke();
+                };
+            }
+
+            var novoLayoutButton = this.FindControl<Button>("NovoLayoutButton");
+            if (novoLayoutButton != null)
+            {
+                novoLayoutButton.Click += (sender, e) =>
+                {
+                    NovoLayoutRequested?.Invoke();
                 };
             }
         }

@@ -9,11 +9,13 @@ namespace ImportadorModelo2.Utils
 {
     public static class UsuarioSeeder
     {
+        /// <summary>
+        /// Cria usuário de teste se não existir
+        /// </summary>
         public static async Task CriarUsuarioTesteAsync(IUsuarioRepository usuarioRepository)
         {
             try
             {
-                // Verificar se já existe usuário de teste
                 var usuarioExistente = await usuarioRepository.GetByEmailAsync("teste@exemplo.com");
                 if (usuarioExistente != null)
                 {
@@ -21,7 +23,6 @@ namespace ImportadorModelo2.Utils
                     return;
                 }
 
-                // Criar usuário de teste
                 var usuario = new Usuario
                 {
                     Email = "teste@exemplo.com",
@@ -42,9 +43,11 @@ namespace ImportadorModelo2.Utils
             }
         }
 
+        /// <summary>
+        /// Gera hash da senha usando SHA256
+        /// </summary>
         private static string GerarHashSenha(string senha)
         {
-            // Mesmo método usado no AutenticacaoService
             using var sha256 = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(senha + "salt_secreto");
             var hashBytes = sha256.ComputeHash(bytes);

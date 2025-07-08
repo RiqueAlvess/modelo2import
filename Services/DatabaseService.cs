@@ -11,19 +11,25 @@ namespace ImportadorModelo2.Services
         Task<NpgsqlConnection> GetConnectionAsync();
         Task<bool> TestConnectionAsync();
         Task InitializeDatabaseAsync();
+        bool IsAvailable { get; }
     }
 
     public class DatabaseService : IDatabaseService
     {
         private readonly string _connectionString;
         private readonly ILogger<DatabaseService>? _logger;
+        private readonly IConfiguration _configuration;
+        private bool _isAvailable = false;
 
         public DatabaseService(IConfiguration configuration, ILogger<DatabaseService>? logger = null)
         {
+            _configuration = configuration;
             _connectionString = configuration.GetConnectionString("DefaultConnection") 
                 ?? throw new InvalidOperationException("Connection string 'DefaultConnection' não encontrada.");
             _logger = logger;
         }
+
+        public bool IsAvailable => _isAvailable;
 
         public async Task<NpgsqlConnection> GetConnectionAsync()
         {
@@ -31,10 +37,12 @@ namespace ImportadorModelo2.Services
             {
                 var connection = new NpgsqlConnection(_connectionString);
                 await connection.OpenAsync();
+                _isAvailable = true;
                 return connection;
             }
             catch (Exception ex)
             {
+                _isAvailable = false;
                 _logger?.LogError(ex, "Erro ao conectar ao banco de dados");
                 throw new InvalidOperationException("Não foi possível conectar ao banco de dados", ex);
             }
@@ -45,22 +53,32 @@ namespace ImportadorModelo2.Services
             try
             {
                 using var connection = await GetConnectionAsync();
-                return connection.State == System.Data.ConnectionState.Open;
+                _isAvailable = connection.State == System.Data.ConnectionState.Open;
+                return _isAvailable;
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Falha no teste de conexão");
+                _isAvailable = false;
+                _logger?.LogWarning(ex, "Falha no teste de conexão com banco de dados");
                 return false;
             }
         }
 
         public async Task InitializeDatabaseAsync()
         {
+            var enableDatabase = _configuration.GetValue<bool>("DatabaseSettings:EnableDatabase", false);
+            
+            if (!enableDatabase)
+            {
+                _logger?.LogInformation("Banco de dados desabilitado por configuração. Usando modo de desenvolvimento.");
+                _isAvailable = false;
+                return;
+            }
+
             try
             {
                 using var connection = await GetConnectionAsync();
                 
-                // Verificar se a tabela usuarios existe
                 var checkTableSql = @"
                     SELECT EXISTS (
                         SELECT FROM information_schema.tables 
@@ -74,7 +92,6 @@ namespace ImportadorModelo2.Services
 
                 if (!tableExists)
                 {
-                    // Criar tabela usuarios
                     var createTableSql = @"
                         CREATE TABLE usuarios (
                             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -89,7 +106,6 @@ namespace ImportadorModelo2.Services
                             atualizado_em TIMESTAMP DEFAULT now()
                         );
 
-                        -- Índices para performance
                         CREATE INDEX idx_usuarios_email ON usuarios(email);
                         CREATE INDEX idx_usuarios_hash_maquina ON usuarios(hash_maquina);
                         CREATE INDEX idx_usuarios_ativo ON usuarios(ativo);
@@ -104,11 +120,23 @@ namespace ImportadorModelo2.Services
                 {
                     _logger?.LogInformation("Tabela 'usuarios' já existe");
                 }
+
+                _isAvailable = true;
             }
             catch (Exception ex)
             {
+                _isAvailable = false;
                 _logger?.LogError(ex, "Erro ao inicializar banco de dados");
-                throw;
+                
+                var useInMemoryFallback = _configuration.GetValue<bool>("DatabaseSettings:UseInMemoryFallback", true);
+                if (useInMemoryFallback)
+                {
+                    _logger?.LogInformation("Usando fallback em memória devido a erro no banco de dados");
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
     }
