@@ -1,0 +1,188 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ImportadorModelo2.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="ImportadorModelo2.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             Background="White">
+
+  <UserControl.Styles>
+    <!-- Estilo para botão de logout -->
+    <Style Selector="Button.logout">
+      <Setter Property="Background" Value="#DC2626"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+      <Setter Property="Padding" Value="12,8"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="Button.logout:pointerover">
+      <Setter Property="Background" Value="#B91C1C"/>
+    </Style>
+  </UserControl.Styles>
+
+  <!-- Grid principal com área de arrastar e botão fechar -->
+  <Grid Background="White">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="50"/> <!-- Header -->
+      <RowDefinition Height="*"/>  <!-- Conteúdo -->
+    </Grid.RowDefinitions>
+
+    <!-- Header com botão fechar e info do usuário -->
+    <Border Grid.Row="0" Background="#F8F9FA" Padding="20,10">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="40"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Área para arrastar (invisível) -->
+        <Border Grid.Column="0" Background="Transparent" Name="DragArea"/>
+        
+        <!-- Info do usuário -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <TextBlock Text="👤" FontSize="16"/>
+          <TextBlock Text="{Binding UsuarioNome}" 
+                     FontWeight="Medium" 
+                     Foreground="#2D3748"
+                     VerticalAlignment="Center"/>
+          <TextBlock Text="|" Foreground="#CBD5E0" VerticalAlignment="Center"/>
+          <TextBlock Text="{Binding UsuarioEmail}" 
+                     FontSize="12" 
+                     Foreground="#718096"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        
+        <!-- Botão Logout -->
+        <Button Grid.Column="2"
+                Classes="logout"
+                Margin="10,0"
+                Name="LogoutButton">
+          <StackPanel Orientation="Horizontal" Spacing="5">
+            <TextBlock Text="↩" FontSize="14"/>
+            <TextBlock Text="Sair"/>
+          </StackPanel>
+        </Button>
+        
+        <!-- Botão X para fechar -->
+        <Button Grid.Column="3"
+                Background="Transparent"
+                BorderThickness="0"
+                Width="30" Height="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Name="CloseButton">
+          <TextBlock Text="✕" FontWeight="Bold" FontSize="14" Foreground="#666"/>
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- Conteúdo principal -->
+    <Border Grid.Row="1" Background="White" Padding="20">
+      <StackPanel Spacing="30" HorizontalAlignment="Center" VerticalAlignment="Center">
+        
+        <!-- Ícone de sucesso -->
+        <Border Background="#10B981" 
+                Width="80" Height="80" 
+                CornerRadius="40"
+                HorizontalAlignment="Center">
+          <TextBlock Text="✓" 
+                     FontSize="40"
+                     Foreground="White"
+                     FontWeight="Bold"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- Mensagem de boas-vindas -->
+        <StackPanel Spacing="15">
+          <TextBlock Text="🎉 Login realizado com sucesso!"
+                     FontSize="28"
+                     FontWeight="Bold"
+                     Foreground="#1A202C"
+                     HorizontalAlignment="Center"/>
+          
+          <TextBlock Text="{Binding MensagemBoasVindas}"
+                     FontSize="16"
+                     Foreground="#4A5568"
+                     HorizontalAlignment="Center"
+                     TextWrapping="Wrap"/>
+          
+          <TextBlock Text="Sistema carregado e pronto para uso."
+                     FontSize="14"
+                     Foreground="#718096"
+                     HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- Cards de funcionalidades futuras -->
+        <StackPanel Spacing="15" MaxWidth="400">
+          
+          <Border Background="#F7FAFC" 
+                  BorderBrush="#E2E8F0" 
+                  BorderThickness="1" 
+                  CornerRadius="8" 
+                  Padding="20">
+            <StackPanel Spacing="10">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="📊" FontSize="20"/>
+                <TextBlock Text="Importação de Dados" 
+                           FontWeight="Medium" 
+                           Foreground="#2D3748"/>
+              </StackPanel>
+              <TextBlock Text="Funcionalidade de importação será implementada aqui." 
+                         FontSize="12" 
+                         Foreground="#718096"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#F7FAFC" 
+                  BorderBrush="#E2E8F0" 
+                  BorderThickness="1" 
+                  CornerRadius="8" 
+                  Padding="20">
+            <StackPanel Spacing="10">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="📋" FontSize="20"/>
+                <TextBlock Text="Relatórios" 
+                           FontWeight="Medium" 
+                           Foreground="#2D3748"/>
+              </StackPanel>
+              <TextBlock Text="Geração de relatórios personalizados." 
+                         FontSize="12" 
+                         Foreground="#718096"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Background="#F7FAFC" 
+                  BorderBrush="#E2E8F0" 
+                  BorderThickness="1" 
+                  CornerRadius="8" 
+                  Padding="20">
+            <StackPanel Spacing="10">
+              <StackPanel Orientation="Horizontal" Spacing="10">
+                <TextBlock Text="⚙️" FontSize="20"/>
+                <TextBlock Text="Configurações" 
+                           FontWeight="Medium" 
+                           Foreground="#2D3748"/>
+              </StackPanel>
+              <TextBlock Text="Personalizar configurações do sistema." 
+                         FontSize="12" 
+                         Foreground="#718096"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+        </StackPanel>
+
+      </StackPanel>
+    </Border>
+  </Grid>
+
+</UserControl>

@@ -1,0 +1,253 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ImportadorModelo2.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="600"
+             x:Class="ImportadorModelo2.Views.LoginView"
+             x:DataType="vm:LoginViewModel"
+             Background="White">
+
+  <Design.DataContext>
+    <vm:LoginViewModel/>
+  </Design.DataContext>
+
+  <UserControl.Styles>
+    <!-- Estilo para remover hover dos botões -->
+    <Style Selector="Button">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="Button:pointerover">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Opacity" Value="0.8"/>
+    </Style>
+    
+    <Style Selector="Button:pressed">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Opacity" Value="0.6"/>
+    </Style>
+
+    <!-- Estilo específico para o botão principal -->
+    <Style Selector="Button.primary">
+      <Setter Property="Background" Value="#2D3748"/>
+      <Setter Property="Foreground" Value="White"/>
+      <Setter Property="BorderThickness" Value="0"/>
+      <Setter Property="CornerRadius" Value="6"/>
+    </Style>
+    
+    <Style Selector="Button.primary:pointerover">
+      <Setter Property="Background" Value="#1A202C"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <Style Selector="Button.primary:pressed">
+      <Setter Property="Background" Value="#0F1419"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- Estilo para botão de fechar -->
+    <Style Selector="Button.close">
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="Foreground" Value="#666666"/>
+      <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <Style Selector="Button.close:pointerover">
+      <Setter Property="Background" Value="#FF0000"/>
+      <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <!-- Estilo para TextBox -->
+    <Style Selector="TextBox">
+      <Setter Property="Background" Value="White"/>
+      <Setter Property="Foreground" Value="#2D3748"/>
+      <Setter Property="BorderBrush" Value="#E2E8F0"/>
+      <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="TextBox:focus">
+      <Setter Property="BorderBrush" Value="#3182CE"/>
+      <Setter Property="Background" Value="White"/>
+    </Style>
+
+    <!-- Estilo para CheckBox -->
+    <Style Selector="CheckBox">
+      <Setter Property="Foreground" Value="#4A5568"/>
+    </Style>
+  </UserControl.Styles>
+
+  <!-- Grid principal com área de arrastar e botão fechar -->
+  <Grid Background="White">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="40"/> <!-- Header com botão X -->
+      <RowDefinition Height="*"/>  <!-- Conteúdo -->
+    </Grid.RowDefinitions>
+
+    <!-- Header invisível para arrastar + botão X -->
+    <Grid Grid.Row="0" Background="White">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="40"/>
+      </Grid.ColumnDefinitions>
+      
+      <!-- Área para arrastar (invisível) -->
+      <Border Grid.Column="0" Background="Transparent" Name="DragArea"/>
+      
+      <!-- Botão X para fechar -->
+      <Button Grid.Column="1"
+              Classes="close"
+              HorizontalAlignment="Center"
+              VerticalAlignment="Center"
+              Padding="0"
+              Width="30"
+              Height="30"
+              Name="CloseButton">
+        <TextBlock Text="✕" FontWeight="Bold" FontSize="14"/>
+      </Button>
+    </Grid>
+
+    <!-- Conteúdo do login -->
+    <Border Grid.Row="1" Background="White" Padding="40,20,40,40">
+      <StackPanel Spacing="24" MaxWidth="320" HorizontalAlignment="Center">
+        
+        <!-- Logo/Ícone -->
+        <Border Background="#4A5568" 
+                Width="64" Height="64" 
+                CornerRadius="12"
+                HorizontalAlignment="Center">
+          <TextBlock Text="💻" 
+                     FontSize="24"
+                     Foreground="White"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+        </Border>
+
+        <!-- Título e Subtítulo -->
+        <StackPanel Spacing="8">
+          <TextBlock Text="Bem-vindo de volta"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     Foreground="#1A202C"
+                     HorizontalAlignment="Center"/>
+          <TextBlock Text="Entre na sua conta para continuar"
+                     FontSize="14"
+                     Foreground="#718096"
+                     HorizontalAlignment="Center"
+                     TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <!-- Mensagem de erro -->
+        <Border Background="#FED7D7" 
+                BorderBrush="#E53E3E" 
+                BorderThickness="1" 
+                CornerRadius="6" 
+                Padding="12"
+                IsVisible="{Binding !!ErrorMessage}">
+          <TextBlock Text="{Binding ErrorMessage}" 
+                     Foreground="#C53030" 
+                     FontSize="14" 
+                     TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Formulário -->
+        <StackPanel Spacing="20">
+          
+          <!-- Campo Email -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Email" 
+                       FontSize="14" 
+                       FontWeight="Medium"
+                       Foreground="#2D3748"/>
+            <TextBox Name="EmailTextBox"
+                     Text="{Binding Email}"
+                     Watermark="Digite seu email"
+                     Padding="12"
+                     FontSize="14"/>
+          </StackPanel>
+
+          <!-- Campo Senha -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="Senha" 
+                       FontSize="14" 
+                       FontWeight="Medium"
+                       Foreground="#2D3748"/>
+            <Grid>
+              <TextBox Name="PasswordTextBox"
+                       Text="{Binding Password}"
+                       Watermark="Digite sua senha"
+                       PasswordChar="●"
+                       Padding="12,12,44,12"
+                       FontSize="14"
+                       IsVisible="{Binding !ShowPassword}"/>
+              
+              <TextBox Name="PasswordVisibleTextBox"
+                       Text="{Binding Password}"
+                       Watermark="Digite sua senha"
+                       Padding="12,12,44,12"
+                       FontSize="14"
+                       IsVisible="{Binding ShowPassword}"/>
+              
+              <Button HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      Margin="6"
+                      Width="32" Height="32"
+                      Command="{Binding TogglePasswordVisibilityCommand}">
+                <TextBlock Text="👁" FontSize="16" Foreground="#718096"/>
+              </Button>
+            </Grid>
+          </StackPanel>
+
+          <!-- Remember me e Forgot password -->
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <CheckBox Grid.Column="0"
+                      IsChecked="{Binding RememberMe}"
+                      Content="Lembrar de mim"
+                      FontSize="14"/>
+            
+            <Button Grid.Column="2"
+                    Command="{Binding ForgotPasswordCommand}">
+              <TextBlock Text="Esqueceu a senha?" 
+                         TextDecorations="Underline"
+                         FontSize="14"
+                         Foreground="#3182CE"/>
+            </Button>
+          </Grid>
+
+          <!-- Botão Entrar -->
+          <Button Classes="primary"
+                  Padding="16"
+                  FontSize="14"
+                  FontWeight="Medium"
+                  HorizontalAlignment="Stretch"
+                  Command="{Binding LoginCommand}"
+                  IsEnabled="{Binding !IsLoading}">
+            <Grid>
+              <TextBlock Text="Entrar" 
+                         IsVisible="{Binding !IsLoading}"
+                         HorizontalAlignment="Center"
+                         Foreground="White"/>
+              <StackPanel Orientation="Horizontal" 
+                          Spacing="8"
+                          HorizontalAlignment="Center"
+                          IsVisible="{Binding IsLoading}">
+                <TextBlock Text="⏳" FontSize="16"/>
+                <TextBlock Text="Entrando..." Foreground="White"/>
+              </StackPanel>
+            </Grid>
+          </Button>
+
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Grid>
+
+</UserControl>
