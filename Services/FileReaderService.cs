@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OfficeOpenXml;
 using Microsoft.Extensions.Logging;
 
 namespace ImportadorModelo2.Services
@@ -213,53 +214,64 @@ namespace ImportadorModelo2.Services
         }
 
         /// <summary>
-        /// Lê cabeçalho de arquivo Excel (simulado - em produção usar EPPlus ou similar)
+        /// Lê cabeçalho de um arquivo Excel usando EPPlus
         /// </summary>
         private async Task<List<string>> LerCabecalhoExcelAsync(string caminhoArquivo, int linhaHeader)
         {
-            // SIMULAÇÃO - Em produção, usar biblioteca como EPPlus
-            await Task.Delay(100);
-            
-            _logger?.LogWarning("Leitura de Excel ainda não implementada. Retornando dados simulados.");
-            
-            return new List<string>
+            return await Task.Run(() =>
             {
-                "Nome", "CPF", "Matrícula", "Data Admissão", "Data Nascimento", 
-                "Sexo", "Estado Civil", "Email", "Telefone", "Endereço", "Cargo", "Setor"
-            };
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using var package = new ExcelPackage(new FileInfo(caminhoArquivo));
+                var worksheet = package.Workbook.Worksheets.First();
+
+                int ultimaColuna = worksheet.Dimension.End.Column;
+                var cabecalho = new List<string>();
+                for (int col = 1; col <= ultimaColuna; col++)
+                {
+                    cabecalho.Add(worksheet.Cells[linhaHeader, col].Text.Trim());
+                }
+
+                return cabecalho;
+            });
         }
 
         /// <summary>
-        /// Lê dados de arquivo Excel (simulado)
+        /// Lê dados de um arquivo Excel usando EPPlus
         /// </summary>
         private async Task<List<List<string>>> LerDadosExcelAsync(string caminhoArquivo, int linhaHeader, int maxLinhas)
         {
-            // SIMULAÇÃO - Em produção, usar biblioteca como EPPlus
-            await Task.Delay(200);
-            
-            _logger?.LogWarning("Leitura de Excel ainda não implementada. Retornando dados simulados.");
-            
-            var dados = new List<List<string>>();
-            for (int i = 0; i < Math.Min(maxLinhas, 5); i++)
+            return await Task.Run(() =>
             {
-                dados.Add(new List<string>
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using var package = new ExcelPackage(new FileInfo(caminhoArquivo));
+                var worksheet = package.Workbook.Worksheets.First();
+
+                int ultimaLinha = worksheet.Dimension.End.Row;
+                int ultimaColuna = worksheet.Dimension.End.Column;
+
+                var dados = new List<List<string>>();
+                int linhaInicial = linhaHeader + 1;
+                int linhaFinal = Math.Min(ultimaLinha, linhaInicial + maxLinhas - 1);
+
+                for (int row = linhaInicial; row <= linhaFinal; row++)
                 {
-                    $"Funcionário {i + 1}",
-                    $"123.456.789-{i:D2}",
-                    $"MAT{i + 1:D4}",
-                    $"01/01/202{i % 5}",
-                    $"15/06/198{i % 10}",
-                    i % 2 == 0 ? "M" : "F",
-                    "Solteiro",
-                    $"funcionario{i + 1}@empresa.com",
-                    $"(11) 9999-000{i}",
-                    $"Rua Exemplo, {i + 100}",
-                    "Analista",
-                    "TI"
-                });
-            }
-            
-            return dados;
+                    var linhaDados = new List<string>();
+                    bool linhaVazia = true;
+                    for (int col = 1; col <= ultimaColuna; col++)
+                    {
+                        var texto = worksheet.Cells[row, col].Text.Trim();
+                        linhaDados.Add(texto);
+                        if (!string.IsNullOrEmpty(texto)) linhaVazia = false;
+                    }
+
+                    if (!linhaVazia)
+                    {
+                        dados.Add(linhaDados);
+                    }
+                }
+
+                return dados;
+            });
         }
 
         /// <summary>
