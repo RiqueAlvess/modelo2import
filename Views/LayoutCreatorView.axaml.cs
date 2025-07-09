@@ -206,6 +206,7 @@ namespace ImportadorModelo2.Views
                 viewModel.ArquivoSelecionado = true;
                 viewModel.NomeArquivo = file.Name;
                 viewModel.TamanhoArquivo = tamanho;
+                viewModel.CaminhoArquivo = file.TryGetLocalPath() ?? string.Empty;
 
                 // Aqui seria feita a leitura real do arquivo
                 // Por enquanto apenas simula a seleção
