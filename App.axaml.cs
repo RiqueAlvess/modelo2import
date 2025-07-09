@@ -83,6 +83,7 @@ namespace ImportadorModelo2
             services.AddSingleton<ILocalStorageService, LocalStorageService>();
             services.AddScoped<ILayoutService, LayoutService>();
             services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+            services.AddScoped<IFileReaderService, FileReaderService>();
 
             // Determinar qual repositório usar
             var enableDatabase = configuration.GetValue<bool>("DatabaseSettings:EnableDatabase", false);
@@ -316,10 +317,11 @@ namespace ImportadorModelo2
                 
                 if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 {
-                    var layoutViewModel = new LayoutCreatorViewModel();
-                    var layoutView = new LayoutCreatorView 
-                    { 
-                        DataContext = layoutViewModel 
+                    var layoutViewModel = _serviceProvider?.GetRequiredService<LayoutCreatorViewModel>();
+                    if (layoutViewModel == null) return;
+                    var layoutView = new LayoutCreatorView
+                    {
+                        DataContext = layoutViewModel
                     };
 
                     // Conectar eventos da LayoutCreatorView
